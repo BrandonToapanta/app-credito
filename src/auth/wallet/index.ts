@@ -22,24 +22,29 @@ export const walletAuth = async () => {
     statement: `Authenticate (${crypto.randomUUID().replace(/-/g, '')}).`,
   });
   console.log('Result', result);
-  if (!result) {
-    throw new Error('No response from wallet auth');
+
+  if (!result || result.finalPayload.status !== 'success') {
+    console.log('Wallet authentication failed', JSON.stringify(result?.finalPayload));
+    return;
   }
 
-  if (result.finalPayload.status !== 'success') {
-    console.error(
-      'Wallet authentication failed',
-      result.finalPayload.error_code,
-    );
-    return;
-  } else {
-    console.log(result.finalPayload);
+  const finalPayload = result.finalPayload;
+
+  // Envía al backend para crear el usuario
+  const response = await fetch('/api/wallet-auth', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ finalPayload }),
+  });
+
+  if (!response.ok) {
+    throw new Error('Error registrando usuario');
   }
 
   await signIn('credentials', {
     redirectTo: '/home',
     nonce,
     signedNonce,
-    finalPayloadJson: JSON.stringify(result.finalPayload),
+    finalPayloadJson: JSON.stringify(finalPayload),
   });
 };

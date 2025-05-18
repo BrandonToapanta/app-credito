@@ -17,6 +17,7 @@ datasource db {
 model User {
   walletAddress String   @unique
   username      String?
+  score_credit  Int      @default(650)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }

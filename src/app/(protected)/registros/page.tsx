@@ -10,18 +10,13 @@ import { Marble, TopBar } from '@worldcoin/mini-apps-ui-kit-react';
 import TablaRegistros from '@/components/TablaRegistros/TablaRegistros';
 
 import prisma from "@/lib/prisma";
-import SemiCircleProgressBar from '@/components/ProgressSemiCircle';
-import PendingBalances from '@/components/TableDeudasPrestador';
 
 export default async function Home() {
   const session = await auth();
 
-  const scor_credit = await prisma.user.findFirst({
-    where: { username: session?.user.username },
+  const posts = await prisma.user.findMany();
 
-  });
-
-  console.log(scor_credit);
+  console.log(posts)
 
 
 
@@ -41,14 +36,7 @@ export default async function Home() {
         />
       </Page.Header>
       <Page.Main className="flex flex-col items-center justify-start gap-4 mb-16 bg-white text-black">
-        <SemiCircleProgressBar
-          value={scor_credit?.score_credit ?? 650} // Ejemplo: 700 (amarillo)
-          size={200}
-          strokeWidth={12}
-          secondaryColor="#D1D5DB" // Gris
-        />
-
-        <PendingBalances />
+        <TablaRegistros />
       </Page.Main>
     </>
   );
