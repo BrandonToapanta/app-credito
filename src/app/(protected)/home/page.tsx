@@ -18,7 +18,9 @@ export default async function Home() {
 
   const scor_credit = await prisma.user.findFirst({
     where: { username: session?.user.username },
-
+    select: {
+      score_credit: true,
+    },
   });
 
   console.log(scor_credit);
