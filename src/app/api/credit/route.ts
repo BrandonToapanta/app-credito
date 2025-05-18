@@ -1,63 +1,37 @@
 import { NextResponse } from 'next/server';
+import { isSameMonth } from 'date-fns';
+import prisma from '@/lib/prisma';
 
-import { PrismaClient } from '@/generated/prisma/client';
-import { addMonths, parseISO, isValid } from 'date-fns';
+export async function GET(req: Request) {
+	const { searchParams } = new URL(req.url);
+	const id = searchParams.get('id');
+	if (!id) return NextResponse.json([], { status: 200 });
 
-const prisma = new PrismaClient();
-
-export async function POST(req: Request) {
-	try {
-		const body = await req.json();
-		console.log('Body recibido:', body);
-		const { lenderAddress, amount, interestRate, installments, startDueDate, clientAddress } = body;
-
-		// Validar campos obligatorios
-		if (!lenderAddress) {
-			return NextResponse.json({ error: 'La dirección de la billetera es obligatoria' }, { status: 400 });
-		}
-		if (typeof amount !== 'number' || isNaN(amount) || amount <= 0) {
-			return NextResponse.json({ error: 'El monto debe ser un número positivo' }, { status: 400 });
-		}
-		if (typeof interestRate !== 'number' || isNaN(interestRate) || interestRate < 0) {
-			return NextResponse.json({ error: 'El interés debe ser un número no negativo' }, { status: 400 });
-		}
-		if (typeof installments !== 'number' || isNaN(installments) || installments <= 0 || !Number.isInteger(installments)) {
-			return NextResponse.json({ error: 'El número de cuotas debe ser un entero positivo' }, { status: 400 });
-		}
-		if (!startDueDate || !isValid(parseISO(startDueDate))) {
-			return NextResponse.json({ error: 'La fecha de primer pago debe ser una fecha válida' }, { status: 400 });
-		}
-
-		const totalToPay = amount * (interestRate / 100 + 1);
-		const monthlyAmount = totalToPay / installments;
-
-		// Crear el crédito
-		const credit = await prisma.credit.create({
-			data: {
-				lenderAddress,
-				clientAddress,
-				interest: interestRate,
-				totalToPay,
+	const credits = await prisma.credit.findMany({
+		where: { lenderAddress: id },
+		include: {
+			User: { select: { username: true } },
+			installments: {
+				where: { paid: false },
+				orderBy: { dueDate: 'asc' },
 			},
-		});
+		},
+	});
 
-		// Crear las cuotas
-		const installmentsData = Array.from({ length: installments }, (_, i) => ({
+	const now = new Date();
+	const balances = credits.map((credit) => {
+		const current = credit.installments.find(i => isSameMonth(new Date(i.dueDate), now));
+		if (!current) return null;
+
+		return {
+			username: credit.User.username,
+			amount: current.amount,
+			dueDate: current.dueDate,
+			status: 'pendiente',
+			installmentId: current.id,
 			creditId: credit.id,
-			amount: monthlyAmount,
-			dueDate: addMonths(parseISO(startDueDate), i),
-		}));
+		};
+	}).filter(Boolean);
 
-		await prisma.creditInstallment.createMany({
-			data: installmentsData,
-		});
-
-		return NextResponse.json({ message: 'Crédito creado con éxito', credit });
-	} catch (error: any) {
-		console.error('[ERROR /api/credit]', error);
-		return NextResponse.json(
-			{ error: 'Error al crear el crédito', details: error.message },
-			{ status: 500 }
-		);
-	}
+	return NextResponse.json(balances);
 }

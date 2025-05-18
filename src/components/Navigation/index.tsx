@@ -27,7 +27,6 @@ export const Navigation = () => {
       <TabItem value="home" icon={<Home />} label="Home" />
       {/* // TODO: These currently don't link anywhere */}
       <TabItem value="registros" icon={<List />} label="Registros" />
-      <TabItem value="busqueda" icon={<Search />} label="Buscar Score" />
       <TabItem value="crear_credito" icon={<PlusCircle />} label="Crear credito" />
     </Tabs>
   );
