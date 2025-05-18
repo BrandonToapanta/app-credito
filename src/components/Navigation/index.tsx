@@ -3,7 +3,7 @@
 import { TabItem, Tabs } from '@worldcoin/mini-apps-ui-kit-react';
 import { Bank, Home, User } from 'iconoir-react';
 import { useState } from 'react';
-import { List } from 'lucide-react';
+import { List, PlusCircle, Search } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 /**
@@ -27,7 +27,8 @@ export const Navigation = () => {
       <TabItem value="home" icon={<Home />} label="Home" />
       {/* // TODO: These currently don't link anywhere */}
       <TabItem value="registros" icon={<List />} label="Registros" />
-      <TabItem value="profile" icon={<User />} label="Profile" />
+      <TabItem value="busqueda" icon={<Search />} label="Buscar Score" />
+      <TabItem value="crear_credito" icon={<PlusCircle />} label="Crear credito" />
     </Tabs>
   );
 };

@@ -1,6 +1,7 @@
 import { auth } from '@/auth';
 import { Navigation } from '@/components/Navigation';
 import { Page } from '@/components/PageLayout';
+import { Toaster } from 'sonner';
 
 export default async function TabsLayout({
   children,
@@ -18,6 +19,7 @@ export default async function TabsLayout({
   return (
     <Page>
       {children}
+      <Toaster position="top-right" richColors />
       <Page.Footer className="px-0 fixed bottom-0 w-full bg-white">
         <Navigation />
       </Page.Footer>

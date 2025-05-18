@@ -10,6 +10,7 @@ import { Marble, TopBar } from '@worldcoin/mini-apps-ui-kit-react';
 import TablaRegistros from '@/components/TablaRegistros/TablaRegistros';
 
 import prisma from "@/lib/prisma";
+import CrearCredito from '@/components/CreatCredit/CreatCredit';
 
 export default async function Home() {
   const session = await auth();
@@ -24,7 +25,7 @@ export default async function Home() {
     <>
       <Page.Header className="p-0 text-black">
         <TopBar
-          title="Registros"
+          title="Crear"
           endAdornment={
             <div className="flex items-center gap-2">
               <p className="text-sm font-semibold capitalize">
@@ -36,7 +37,7 @@ export default async function Home() {
         />
       </Page.Header>
       <Page.Main className="flex flex-col items-center justify-start gap-4 mb-16 bg-white text-black">
-        <TablaRegistros />
+        <CrearCredito />
       </Page.Main>
     </>
   );
