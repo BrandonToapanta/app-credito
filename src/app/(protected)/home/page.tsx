@@ -50,7 +50,7 @@ export default async function Home() {
           secondaryColor="#D1D5DB" // Gris
         />
 
-        <PendingBalances />
+        <PendingBalances id={session?.user.id || ""} />
       </Page.Main>
     </>
   );

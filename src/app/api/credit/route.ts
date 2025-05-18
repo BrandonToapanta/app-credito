@@ -9,7 +9,7 @@ export async function POST(req: Request) {
 	try {
 		const body = await req.json();
 		console.log('Body recibido:', body);
-		const { lenderAddress, amount, interestRate, installments, startDueDate } = body;
+		const { lenderAddress, amount, interestRate, installments, startDueDate, clientAddress } = body;
 
 		// Validar campos obligatorios
 		if (!lenderAddress) {
@@ -27,8 +27,6 @@ export async function POST(req: Request) {
 		if (!startDueDate || !isValid(parseISO(startDueDate))) {
 			return NextResponse.json({ error: 'La fecha de primer pago debe ser una fecha válida' }, { status: 400 });
 		}
-
-		const clientAddress = 'admin';
 
 		const totalToPay = amount * (interestRate / 100 + 1);
 		const monthlyAmount = totalToPay / installments;

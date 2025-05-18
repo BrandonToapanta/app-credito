@@ -14,6 +14,7 @@ model User {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   score_credit  Int      @default(650)
+  Credit        Credit[]
 }
 
 model Credit {
@@ -25,6 +26,7 @@ model Credit {
   status        Status              @default(pendiente)
   createdAt     DateTime            @default(now())
   updatedAt     DateTime            @updatedAt
+  User          User                @relation(fields: [clientAddress], references: [walletAddress])
   installments  CreditInstallment[]
 }
 

@@ -47,4 +47,6 @@ export const walletAuth = async () => {
     signedNonce,
     finalPayloadJson: JSON.stringify(finalPayload),
   });
+
+  return finalPayload;
 };

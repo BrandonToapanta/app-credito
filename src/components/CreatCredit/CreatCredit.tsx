@@ -4,7 +4,11 @@ import { useState } from 'react';
 import { toast } from 'sonner'; // Opcional: para notificaciones
 import { CreditCard } from 'lucide-react'; // ícono de referencia
 
-const CrearCredito = () => {
+interface CrearCreditoProps {
+	lenderAddress: string;
+}
+
+export default function CrearCredito({ lenderAddress }: CrearCreditoProps) {
 	const [walletAddress, setWalletAddress] = useState('');
 	const [amount, setAmount] = useState('');
 	const [dueDate, setDueDate] = useState('');
@@ -47,8 +51,8 @@ const CrearCredito = () => {
 					'Content-Type': 'application/json',
 				},
 				body: JSON.stringify({
-					lenderAddress: walletAddress,
-					clientAddress: 'admin',
+					lenderAddress: lenderAddress,
+					clientAddress: walletAddress,
 					amount: parsedAmount,
 					interestRate: parsedInterest,
 					installments: parsedInstallments,
@@ -140,4 +144,3 @@ const CrearCredito = () => {
 	);
 };
 
-export default CrearCredito;
